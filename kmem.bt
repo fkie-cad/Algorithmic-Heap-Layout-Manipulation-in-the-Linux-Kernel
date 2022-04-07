@@ -1,0 +1,91 @@
+#!/usr/bin/bpftrace
+/*
+ * kmem.bt 		trace the allocations of an device and calculate the distance between fst and snd
+ */
+
+BEGIN
+{
+	//printf("Tracing kmalloc allocations of vuln device\n");
+	//printf("Hit Ctrl-C to end.\n");
+	@fst_position = 3;
+	@snd_position = 1;
+	@fst_counter = 0;
+	@snd_counter = 0;
+}
+
+tracepoint:syscalls:sys_enter_openat
+/strncmp(str(args->filename),"/dev/vuln_dev",13) == 0/
+{
+
+    //printf("vuln module was opend: %s\n",str(args->filename));
+    @found_vuln= 1;
+}
+
+tracepoint:syscalls:sys_exit_openat
+/@found_vuln == 1/                                        
+{
+
+    //printf("get open fd back with the following value=%d\n",args->ret);            
+    clear(@found_vuln);
+    @fd= (uint64)args->ret;
+}
+
+tracepoint:syscalls:sys_enter_ioctl
+/args->fd == @fd && @fd != 0/
+{
+    @VULN_ALLOC_TARGET=(uint64)1001;
+    @VULN_ALLOC_OVERFLOW=(uint64)1002;
+    if(args->cmd == @VULN_ALLOC_OVERFLOW){
+    	 @fst_triggered = 1;
+         //printf("ioctl1 cmd=%ld, arg=%ld, fd=%ld\n",args->cmd, args->arg, args->fd);
+    }
+    if(args->cmd == @VULN_ALLOC_TARGET){
+         //printf("ioctl2 cmd=%ld, arg=%ld, fd=%ld\n",args->cmd, args->arg, args->fd);
+         @snd_triggered = 1; 
+    }
+}
+
+tracepoint:kmem:kmalloc
+/(args->bytes_req == 256 || args->bytes_req == 255) && (@fst_triggered == 1 || @snd_triggered == 1)/
+{
+    //printf("kmalloc mit 256!\n");
+
+       if(@fst_triggered == 1){
+       		@fst_counter++;
+		if(@fst_counter == @fst_position){
+			//printf("fst: kmalloc_node return addr: %lx (req_bytes=%d)\n",args->ptr,args->bytes_req);
+			@fst_address = (int64) args->ptr;
+			@fst_triggered = -1;
+		}	
+       }else if(@snd_triggered == 1){
+       		@snd_counter++;
+            //printf("snd_counter: %ld\n",@snd_counter);
+		if(@snd_counter == @snd_position){
+			//printf("snd: kmalloc_node return addr: %lx (req_bytes=%d)\n",args->ptr,args->bytes_req);
+			@snd_address = (int64) args->ptr;
+			//@distance = @fst_address - @snd_address > 0 ? @fst_address - @snd_address : @snd_address - @fst_address;
+            @distance = @fst_address - @snd_address;
+			printf("%ld\n",@distance);
+			@snd_triggered = -1;
+		}
+       }
+        
+}
+
+
+END
+{
+    clear(@found_vuln);
+    clear(@fd);
+    clear(@VULN_ALLOC_OVERFLOW);
+    clear(@VULN_ALLOC_TARGET);
+    clear(@fst_triggered);
+    clear(@snd_triggered);
+    clear(@snd_counter);
+    clear(@fst_counter);
+    clear(@snd_position);
+    clear(@fst_position);
+    clear(@fst_address);
+    clear(@snd_address);
+    clear(@distance);
+}

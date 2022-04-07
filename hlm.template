@@ -1,0 +1,133 @@
+#define _GNU_SOURCE
+#include <dirent.h>
+#include <fcntl.h>
+#include <sched.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <sys/shm.h>
+
+#define SLAB_DEFRAG_ALLOC 1006
+#define SLAB_DEFRAG_FREE_ALL 1007
+
+#define VULN_ALLOC_TARGET 1001
+#define VULN_ALLOC_OVERFLOW 1002
+
+#define BUFSIZE 256
+
+typedef uint id_t;
+typedef unsigned long addr_t;
+
+typedef struct slab_params {
+    size_t size;
+    id_t ID;
+    size_t nmemb;
+    id_t oldID;
+    addr_t addr;
+} slab_params_t;
+
+void fatal(char *str) {
+    fprintf(stderr, "[-] %s\n", str);
+    exit(EXIT_FAILURE);
+}
+
+int calculate_slaboff(char *name) {
+    FILE *fp;
+    char slab[BUFSIZE], line[BUFSIZE];
+    int ret;
+    /* UP case */
+    int active_obj, total;
+
+    bzero(slab, BUFSIZE);
+    bzero(line, BUFSIZE);
+
+    fp = fopen("/proc/slabinfo", "r");
+    if (fp == NULL)
+        fatal("error opening /proc for slabinfo");
+
+    fgets(slab, sizeof(slab) - 1, fp);
+    do {
+        ret = 0;
+        if (!fgets(line, sizeof(line) - 1, fp))
+           break;
+        ret = sscanf(line, "%s %u %u", slab, &active_obj, &total);
+    } while (strcmp(slab, name));
+
+    close(fileno(fp));
+    fclose(fp);
+
+    return ret == 3 ? total - active_obj : -1;
+}
+
+static void alternate_defragment(int fd, char *slabname, size_t size){
+    int diff, cnt, i;
+    slab_params_t params;
+    params.size = size;
+    params.ID = 0;
+    diff = calculate_slaboff(slabname);
+    cnt = diff * 10;
+    for(i = 0; i < cnt; i++){
+        diff = calculate_slaboff(slabname);
+        if(diff == 0){
+            return;
+        }else if(diff < 0){
+            ioctl(fd, SLAB_DEFRAG_FREE_ALL, NULL);
+            close(fd);
+            fatal("Failed to calculate diff");
+        }
+        params.ID = i;
+        if (ioctl(fd, SLAB_DEFRAG_ALLOC, &params) != 0){
+            ioctl(fd, SLAB_DEFRAG_FREE_ALL, NULL);
+            close(fd);
+            fatal("Error in kernel while defragging");
+        }
+    }
+    if(diff != 0){
+            ioctl(fd, SLAB_DEFRAG_FREE_ALL, NULL);
+            close(fd);
+            fatal("Failed to defrag slubs");
+    }
+}
+
+static int bindcpu() {
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(0, &set);
+    if(sched_setaffinity(0, sizeof(cpu_set_t), &set) < 0) {
+        fatal("Setaffinity failed");
+    }
+    return 0;
+}
+
+void shm_kern_alloc(unsigned kmalloc_size, unsigned num){
+    int i = 0;
+    int *shmids;
+    shmids = malloc(num * sizeof(int));
+    for(i=0; i<num; i++){
+        shmids[i] = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+    }
+    return;
+ }
+
+int main(){
+    bindcpu();
+    system("for shmid in `cat /proc/sysvipc/shm | awk '{print $2}'`; do ipcrm -m $shmid > /dev/null 2>&1; done;");
+
+    shm_kern_alloc(256, 192);
+    int fd = open("/dev/slab_api_dev", O_RDONLY);
+    if (fd < 0){
+        fatal("Cannod open slab api");
+    }
+    alternate_defragment(fd, "kmalloc-256", 256);
+    close(fd);
+    fd = open("/dev/vuln_dev", O_RDONLY);
+    //system("for shmid in `cat /proc/sysvipc/shm | awk '{print $2}'`; do ipcrm -m $shmid > /dev/null 2>&1; done;");
+    //shm_kern_alloc(256, 50);
+
+%%CANDIDATE%%
+    close(fd);
+    return 0;
+}
+
