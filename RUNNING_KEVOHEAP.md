@@ -40,7 +40,7 @@ $ savevm savestate
 
 
 ## Run KEvoHeap+QEMU+BPFTrace
-This section describes how to setup everything to use KEvoHeap on the `vuln` kernel module with the help of bpftrace
+This section describes how to setup everything to use KEvoHeap on the `vuln` kernel module, an examplary vulnerable kernel module, with the help of bpftrace. More information about the `vuln` module can be found in `EXAMPLE_VULN.md`.
 
 1. Run the `setup.sh` script.
 2. Build the `slab_api` kernel module
