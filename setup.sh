@@ -42,10 +42,10 @@ BINUTILS_VERSION=$(as --version | head -n 1 | awk '{print $NF}')
 echo "Installing dependencies"
 if command -v apt-get &> /dev/null
 then
-    sudo apt-get -y  update && sudo apt-get upgrade -y && sudo apt-get -y install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison qemu-system-x86 debootstrap dwarves
+    sudo apt-get -y  update && sudo apt-get upgrade -y && sudo apt-get -y install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison qemu-system-x86 debootstrap dwarves netcat
 elif command -v pacman &> /dev/null
 then
-    sudo pacman -Sy --needed git fakeroot base-devel ncurses xz bc flex libelf bison qemu-headless debootstrap pahole
+    sudo pacman -Sy --needed git fakeroot base-devel ncurses xz bc flex libelf bison qemu-headless debootstrap pahole gnu-netcat
 else
     echo "Neither apt or pacman was found, exitting"
     exit
