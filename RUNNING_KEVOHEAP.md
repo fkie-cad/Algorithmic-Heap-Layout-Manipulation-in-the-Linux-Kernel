@@ -40,7 +40,7 @@ $ ./ncserver.sh &
 $ nc localhost 55555
 $ savevm savestate
 ```
-8. To now run EvoHeap with fast reset, quit qemu and run `fast_reset_evo_statistics.sh` (The scriptstarts a new qemu instance, thats why we quit qemu first)
+8. To now run EvoHeap with fast reset, quit qemu and run `fast_reset_evo_statistics.sh` (The script starts a new qemu instance, thats why we quit qemu first). To modify the number of noise allocations, edit the `fast_reset_evo_statistics.sh` script and change the `-n` parameter in the line `python3 algorithms/evoheap.py -a ksieve -n 3`.
 
 
 ## Run KEvoHeap+QEMU+BPFTrace
@@ -81,4 +81,4 @@ $ ./kmem.bt > /tmp/dist
 $ nc localhost 55555
 $ savevm savestate
 ```
-10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs
+10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it
