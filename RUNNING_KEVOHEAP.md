@@ -22,12 +22,16 @@ $ make
 ```bash
 $ ./scp_to_qemu.sh kernel_sieve/client/kernel_sieve
 $ ./scp_to_qemu.sh kernel_sieve/kernel_module/slab_api.ko
+$ ./scp_to_qemu.sh ./netcat_from_buster
+$ ./scp_to_qemu.sh ./ncserver.sh
 ```
-5. Login to qemu and load the kernel module
+5. Login to qemu, load the kernel module and start the server
 ```bash
 $ ./ssh.sh
 $ insmod slab_api.ko
+$ ./ncserver.sh &
 ```
+
 6. Still inside qemu, create folders `ins`, `res` and `raw`
 
 7. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor. One way to do this is to connect to it via netcat on port 55555
@@ -59,6 +63,7 @@ $ make
 $ ./scp_to_qemu.sh kernel_sieve/kernel_module/slab_api.ko
 $ ./scp_to_qemu.sh vuln/vuln.ko
 $ ./scp_to_qemu.sh ./netcat_from_buster
+$ ./scp_to_qemu.sh ./ncserver.sh
 $ ./scp_to_qemu.sh ./kmem.bt
 ```
 6. inside qemu (Login with user 'root'), create folders `ins`, `res` and `raw`
