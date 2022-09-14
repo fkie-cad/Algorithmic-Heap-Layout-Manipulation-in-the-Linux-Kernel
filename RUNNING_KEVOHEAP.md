@@ -29,6 +29,7 @@ $ ./scp_to_qemu.sh ./ncserver.sh
 ```bash
 $ ./ssh.sh
 $ insmod slab_api.ko
+$ chmod +x ncserver.sh
 $ ./ncserver.sh &
 ```
 
@@ -72,7 +73,9 @@ $ ./scp_to_qemu.sh ./kmem.bt
 ```bash
 $ insmod slab_api.ko
 $ insmod vuln.ko
+$ chmod +x ncserver.sh
 $ ./ncserver.sh &
+$ chmod +x kmem.bt
 $ ./kmem.bt > /tmp/dist
 ```
 9. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor. One way to do this is to connect to it via netcat on port 55555
