@@ -72,18 +72,16 @@ class RandomSearchBase(ABC):
 
     def _remove_prefix(self, text, prefix):
         if text.startswith(prefix):
-            return text[len(prefix):]
+            return text[len(prefix) :]
         return text  # or whatever
-
-
 
     def construct_candidate(self):
         """Construct a candidate"""
-        #print(f"[~] Constructing candidate {self._candidate_counter}")
+        # print(f"[~] Constructing candidate {self._candidate_counter}")
         self._candidate_counter += 1
         cand = ""
-        len = rnd.randint(1,self._m)
-        fstIdx = rnd.randint(0,len - 1)
+        len = rnd.randint(1, self._m)
+        fstIdx = rnd.randint(0, len - 1)
         for i in range(len):
             if i == fstIdx:
                 cand = "\n".join([cand, self.fst_sequence])
@@ -99,11 +97,12 @@ class RandomSearchBase(ABC):
         """Create a list of g candidates"""
         return [self.construct_candidate() for _ in range(self._g)]
 
+
 class RandomSearchSimple(RandomSearchBase):
     def append_free_seq(self, cand):
         """Frees a random object. If none present, allocate"""
         if not self._in_use_ids:
-            #redirect to alloc, as there is nothing to free
+            # redirect to alloc, as there is nothing to free
             return self.append_alloc_seq(cand)
         free_id = rnd.choice(self._in_use_ids)
         cand = "\n".join([cand, f"kfree {free_id}"])
@@ -113,7 +112,7 @@ class RandomSearchSimple(RandomSearchBase):
     def append_alloc_seq(self, cand):
         """Allocates a new object"""
         if len(self._in_use_ids) == self._max_id:
-            #We cannot allocate more objects, so we simply do nothing
+            # We cannot allocate more objects, so we simply do nothing
             return cand
         ids = [x for x in range(self._max_id) if x not in self._in_use_ids]
         alloc_id = rnd.choice(ids)
@@ -144,6 +143,7 @@ class RandomSearchNoise(RandomSearchSimple):
             self._in_use_ids.append(alloc_id)
         return self._remove_prefix(fst, "\n")
 
+
 class RandomSearchNoiseCantBeFreed(RandomSearchSimple):
     def __init__(self, alloc_size, m=100, r=0.98, g=1000, max_id=2000, noise=1):
         super().__init__(alloc_size, m, r, g, max_id)
@@ -151,9 +151,9 @@ class RandomSearchNoiseCantBeFreed(RandomSearchSimple):
 
     def append_free_seq(self, cand):
         """Frees a random object. If none present, allocate"""
-        freeable_ids = list(filter(lambda id: id < self._max_id ,self._in_use_ids))
+        freeable_ids = list(filter(lambda id: id < self._max_id, self._in_use_ids))
         if not freeable_ids:
-            #redirect to alloc, as there is nothing to free
+            # redirect to alloc, as there is nothing to free
             return self.append_alloc_seq(cand)
         free_id = rnd.choice(freeable_ids)
         cand = "\n".join([cand, f"kfree {free_id}"])
@@ -177,24 +177,16 @@ class RandomSearchNoiseCantBeFreed(RandomSearchSimple):
             self._in_use_ids.append(alloc_id)
         return self._remove_prefix(fst, "\n")
 
+
 if __name__ == "__main__":
-    #sample_size = 50
+    # sample_size = 50
     max_cand_size = 15
     sample_size = 200
-    #Searcher = RandomSearchSimple(1024, r=0.98,g=sample_size, m=max_cand_size)
-    Searcher = RandomSearchNoiseCantBeFreed(256, r=0.5,g=sample_size, m=max_cand_size, noise=3)
+    # Searcher = RandomSearchSimple(1024, r=0.98,g=sample_size, m=max_cand_size)
+    Searcher = RandomSearchNoiseCantBeFreed(
+        256, r=0.5, g=sample_size, m=max_cand_size, noise=3
+    )
     candidates = Searcher.create_batch()
     for i in range(sample_size):
         with open(f"./ins/{i}", "w") as f:
             f.write(candidates[i])
-
-
-
-
-
-
-
-
-
-
-
