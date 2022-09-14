@@ -492,6 +492,10 @@ class EvoHeapNoNoise(EvoHeap):
         return "\n".join(candidate) + "\n"
 
 class EvoHeapWithNoise(EvoHeap):
+    def __init__(self, noise=3, **kwargs):
+        super().__init__(**kwargs)
+        self._noise = noise
+
     def translate_to_text(self, ind):
         MAX_ID_NORMAL = 1800
         MAX_ID_TOTAL = 2047
@@ -517,22 +521,11 @@ class EvoHeapWithNoise(EvoHeap):
                 ids = [x for x in range(MAX_ID_NORMAL,MAX_ID_TOTAL) if x not in in_use_ids]
                 selected_ids = []
                 #for _ in range(10): this was 5 noise
-                for _ in range(12):
+                for _ in range(self._noise * 2):
                     id = rnd.choice(ids)
                     selected_ids.append(id)
                     in_use_ids.append(id)
-                #1 noise
-                #candidate.append(f"kmalloc 96 {selected_ids[0]}\nfst 96\nkmalloc 96 {selected_ids[1]}")
-                #2 noise
-                #candidate.append(f"kmalloc 96 {selected_ids[0]}\nkmalloc 96 {selected_ids[1]}\nfst 96\nkmalloc 96 {selected_ids[2]}\nkmalloc 96 {selected_ids[3]}")
-                #3 noise
-                candidate.append(f"kmalloc 256 {selected_ids[0]}\nkmalloc 256 {selected_ids[1]}\nkmalloc 256 {selected_ids[2]}\nfst 256\nkmalloc 256 {selected_ids[3]}\nkmalloc 256 {selected_ids[4]}\nkmalloc 256 {selected_ids[5]}")
-                #4 noise
-                #candidate.append(f"kmalloc 96 {selected_ids[0]}\nkmalloc 96 {selected_ids[1]}\nkmalloc 96 {selected_ids[2]}\nkmalloc 96 {selected_ids[3]}\nfst 96\nkmalloc 96 {selected_ids[4]}\nkmalloc 96 {selected_ids[5]}\nkmalloc 96 {selected_ids[6]}\nkmalloc 96 {selected_ids[7]}")
-                #5 noise
-                #candidate.append(f"kmalloc 96 {selected_ids[0]}\nkmalloc 96 {selected_ids[1]}\nkmalloc 96 {selected_ids[2]}\nkmalloc 96 {selected_ids[3]}\nkmalloc 96 {selected_ids[4]}\nfst 96\nkmalloc 96 {selected_ids[5]}\nkmalloc 96 {selected_ids[6]}\nkmalloc 96 {selected_ids[7]}\nkmalloc 96 {selected_ids[8]}\nkmalloc 96 {selected_ids[9]}")
-                #6 noise
-                #candidate.append(f"kmalloc 96 {selected_ids[0]}\nkmalloc 96 {selected_ids[1]}\nkmalloc 96 {selected_ids[2]}\nkmalloc 96 {selected_ids[3]}\nkmalloc 96 {selected_ids[4]}\nkmalloc 96 {selected_ids[5]}\nfst 96\nkmalloc 96 {selected_ids[6]}\nkmalloc 96 {selected_ids[7]}\nkmalloc 96 {selected_ids[8]}\nkmalloc 96 {selected_ids[9]}\nkmalloc 96 {selected_ids[10]}\nkmalloc 96 {selected_ids[11]}")
+                candidate.append("\n".join([f"kmalloc 256 {selected_ids[i]}" for i in range(self._noise)]) + "\nfst 256\n" + "\n".join([f"kmalloc 256 {selected_ids[i]}" for i in range(self._noise, 2*self._noise)]))
             elif type == SND_T:
                 candidate.append("snd 256")
             else:
@@ -621,8 +614,8 @@ def real():
     evo.do_evo_step()
 
 def main():
-    real()
-    #one_noise()
+    #real()
+    one_noise()
     #no_noise()
     """
     types = [ALLOC_T, FREE_T]
