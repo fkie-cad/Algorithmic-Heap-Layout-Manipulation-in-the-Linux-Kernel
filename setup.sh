@@ -50,6 +50,7 @@ else
     echo "Neither apt or pacman was found, exitting"
     exit
 fi
+pip3 install deap
 
 
 KERNEL="./kernel_src"
@@ -114,7 +115,7 @@ fi
 
 cd ..
 echo "Creating image"
-./create-image.sh -d buster
+./create-image.sh -d bullseye
 sudo rm -rf ./chroot
-qemu-img convert -f raw -O qcow2 buster.img buster.qcow2
+qemu-img convert -f raw -O qcow2 bullseye.img bullseye.qcow2
 

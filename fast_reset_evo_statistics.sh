@@ -45,20 +45,20 @@ do
     echo -e "[*] Starting try number $global_counter"
     for (( counter=1; counter <= ITERATIONS; counter++ ))
     do
-        python3 ./evoheap.py
+        python3 ./algorithms/evoheap.py
         if [ $? -ne 0 ]; 
         then
             echo -e "$NUMBER_OF_TRIES" >> $TRIES_FILE
             continue 2
         fi
-        scp -i ./buster.id_rsa -P 10021 -r -o "StrictHostKeyChecking no" ./ins root@localhost:/home/ > /dev/null && \
+        scp -i ./bullseye.id_rsa -P 10021 -r -o "StrictHostKeyChecking no" ./ins root@localhost:/root/ > /dev/null && \
             echo "savevm savestate" | nc -N 127.0.0.1 55555 > /dev/null
         CANDIDATES="./ins"/* 
         for cand in $CANDIDATES
         do
-            #ssh -i ../../kernel_virtualisation/linux-5.9.7/image/buster.id_rsa -p 10021 root@localhost -o "StrictHostKeyChecking no" "cd /home/ && ./kernel_sieve $cand > res/$(basename $cand)" > /dev/null 
+            #ssh -i ../../kernel_virtualisation/linux-5.9.7/image/bullseye.id_rsa -p 10021 root@localhost -o "StrictHostKeyChecking no" "cd /home/ && ./kernel_sieve $cand > res/$(basename $cand)" > /dev/null 
             command_netcat
-            #scp -i ../../kernel_virtualisation/linux-5.9.7/image/buster.id_rsa -P 10021 -r -o "StrictHostKeyChecking no" root@localhost:/home/res/$(basename $cand) ./res/$(basename $cand) > /dev/null 
+            #scp -i ../../kernel_virtualisation/linux-5.9.7/image/bullseye.id_rsa -P 10021 -r -o "StrictHostKeyChecking no" root@localhost:/home/res/$(basename $cand) ./res/$(basename $cand) > /dev/null 
             #echo "cat res/$(basename $cand)" | nc -nN 127.0.0.1 44444 > ./res/$(basename $cand)
             quit_vm
             echo "Ping..."
