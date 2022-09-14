@@ -243,7 +243,7 @@ static void defragment(char *slabname, size_t size, uint iterations) {
     for (iter = 0; iter < iterations; iter++) {
         fillup = calculate_slaboff(slabname);
         //printf("Fillup is %d\n", fillup);
-        //fillup += 10;  //give it a little extra
+        fillup += 16;  //give it a little extra
         if (fillup > 0) {
             for (id = 0; id < fillup; id++) {
                 params.ID = id + highest + 1;
@@ -309,8 +309,8 @@ int main(int argc, char *argv[]) {
             char path[BUFSIZE];
             sprintf(path, "./ins/%s", de->d_name);
             cmd_list = read_instructions(path);
-            //defragment("kmalloc-1k", 1024,1);
-            ioctl(fd, SLAB_CREATE_CACHE, NULL);
+            defragment("kmalloc-256", 256,1);
+            //ioctl(fd, SLAB_CREATE_CACHE, NULL);
             int res = execute(fd, cmd_list);
             if (res == -1){
                 fst = 0;
