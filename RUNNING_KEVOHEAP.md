@@ -13,7 +13,7 @@ A large part of setting up QEMU has been automated, but some manual steps still 
 2. Build the KernelSieve client and kernel module
 ```bash
 $ cd kernel_sieve/client/
-$ gcc kernel_sieve.c -o kernel_sieve
+$ gcc kernel_sieve.c -static -o kernel_sieve
 $ cd ../kernel_module
 $ make
 ```
