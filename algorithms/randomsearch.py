@@ -2,6 +2,7 @@
 
 import random as rnd
 from abc import ABC, abstractmethod
+from argparse import ArgumentParser
 
 
 class RandomSearchBase(ABC):
@@ -179,12 +180,22 @@ class RandomSearchNoiseCantBeFreed(RandomSearchSimple):
 
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument(
+        "-n",
+        dest="noise",
+        metavar="noise",
+        type=int,
+        help="The amount of noise allocations to perform.",
+        required=True,
+    )
+    args = parser.parse_args()
     # sample_size = 50
     max_cand_size = 15
     sample_size = 200
     # Searcher = RandomSearchSimple(1024, r=0.98,g=sample_size, m=max_cand_size)
     Searcher = RandomSearchNoiseCantBeFreed(
-        256, r=0.5, g=sample_size, m=max_cand_size, noise=3
+        256, r=0.5, g=sample_size, m=max_cand_size, noise=args.noise
     )
     candidates = Searcher.create_batch()
     for i in range(sample_size):

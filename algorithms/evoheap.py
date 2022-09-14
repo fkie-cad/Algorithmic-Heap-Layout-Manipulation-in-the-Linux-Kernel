@@ -3,6 +3,7 @@ import random as rnd
 import os, sys
 from pprint import pprint
 from abc import ABC, abstractmethod
+from argparse import ArgumentParser
 
 TYPE_MASK = 0xFF000000000000000000000000000000
 TYPE_SHIFT = 120
@@ -666,7 +667,7 @@ def no_noise():
     evo.do_evo_step()
 
 
-def one_noise():
+def use_slabapi_allocs(noise):
 
     groups = dict()
     groups[0x1] = dict()
@@ -675,12 +676,12 @@ def one_noise():
     groups[0x1]["probs"] = [1.0]
 
     evo = EvoHeapWithNoise(
-        noise=3, types=None, groups=groups, alloc_free_ratio=0.5, target_dist=-256
+        noise=noise, types=None, groups=groups, alloc_free_ratio=0.5, target_dist=-256
     )
     evo.do_evo_step()
 
 
-def real():
+def use_real_allocs():
     groups = dict()
     groups[0x1] = dict()
     groups["probs"] = [1.0]
@@ -700,8 +701,32 @@ def real():
 
 
 def main():
-    # real()
-    one_noise()
+    parser = ArgumentParser()
+    parser.add_argument(
+        "-a",
+        dest="allocations",
+        metavar="allocations",
+        type=str,
+        required=True,
+        help="Choose between 'ksieve' for slab_api allocations or 'real' for allocations unsing shmget and the vuln kernel module",
+    )
+    parser.add_argument(
+        "-n",
+        dest="noise",
+        metavar="noise",
+        type=int,
+        help="The amount of noise allocations to perform. Only relevant if performing allocations with slab_api, otherwise noise depends on the 'vuln' kernel module",
+        default=-1,
+    )
+    args = parser.parse_args()
+    if args.allocations == "real":
+        use_real_allocs()
+    elif args.allocations == "ksieve":
+        if args.noise < 0:
+            raise RuntimeError("You have to give a non-negative Value for noise!")
+        use_slabapi_allocs(args.noise)
+    else:
+        raise RuntimeError("Invalid value for allocation type!")
     # no_noise()
     """
     types = [ALLOC_T, FREE_T]

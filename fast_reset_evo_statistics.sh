@@ -45,7 +45,7 @@ do
     echo -e "[*] Starting try number $global_counter"
     for (( counter=1; counter <= ITERATIONS; counter++ ))
     do
-        python3 ./algorithms/evoheap.py
+        python3 ./algorithms/evoheap.py -a ksieve -n 3
         if [ $? -ne 0 ]; 
         then
             echo -e "$NUMBER_OF_TRIES" >> $TRIES_FILE
