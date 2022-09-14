@@ -85,3 +85,10 @@ $ nc localhost 55555
 $ savevm savestate
 ```
 10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it
+
+## Troubleshooting
+### Errors in res/
+If you notice many errors in the `res` directory, this could mean that qemu does not reboot fast enough .Try increasing the time the respective runner script sleeps after rebooting qemu.
+
+### Large Numbers in res
+If you encounter mostly very large numbers in the files in `res/`, you have to recreate the savestate of the vm by booting it with the `./qemu_startup_qcow2_no_load.sh`, loading the module, starting the server etc. and then creating a snapshot. It might be neccessary to repeat this multiple times until you get a "good" savestate
