@@ -62,7 +62,7 @@ do
             #echo "cat res/$(basename $cand)" | nc -nN 127.0.0.1 44444 > ./res/$(basename $cand)
             quit_vm
             echo "Ping..."
-            sleep 0.05s
+            sleep 0.1s
         done
 
         
