@@ -47,7 +47,10 @@ $ savevm savestate
 ## Run KEvoHeap+QEMU+BPFTrace
 This section describes how to setup everything to use KEvoHeap on the `vuln` kernel module, an examplary vulnerable kernel module, with the help of bpftrace. More information about the `vuln` module can be found in `EXAMPLE_VULN.md`.
 
-1. Run the `setup.sh` script.
+1. Run the `setup.sh` script with the `-e` flag to enable bpf support:
+```bash
+$ ./setup.sh -e
+```
 2. Build the `slab_api` kernel module
 ```bash
 $ cd kernel_sieve/kernel_module
@@ -67,7 +70,7 @@ $ ./scp_to_qemu.sh ./netcat_from_buster
 $ ./scp_to_qemu.sh ./ncserver.sh
 $ ./scp_to_qemu.sh ./kmem.bt
 ```
-6. create folders `ins`, `res` and `raw` both in the VM as well as on the host
+6. create folders `ins`, `res`, `raw`, and `res` both in the VM as well as on the host
 7. Shut qemu down and restart it
 8. Load the modules, start the server and bpftrace
 ```bash
@@ -84,7 +87,7 @@ $ ./kmem.bt > /tmp/dist
 $ nc localhost 55555
 $ savevm savestate
 ```
-10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it
+10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it. The defaultis 2.
 
 ## Troubleshooting
 ### Errors in res/
