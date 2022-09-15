@@ -16,7 +16,7 @@ def main():
     candidate_basename = args.candidate[0].split('/')[-1]
     with open(f"./exec/{candidate_basename}.c", "w") as f:
         f.write(template_raw.replace("%%CANDIDATE%%", candidate_raw))
-    os._exit(subprocess.call(f"gcc ./exec/{candidate_basename}.c -o ./exec/{candidate_basename}".split()))
+    os._exit(subprocess.call(f"gcc ./exec/{candidate_basename}.c -static -o ./exec/{candidate_basename}".split()))
 
 
 
