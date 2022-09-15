@@ -343,7 +343,7 @@ static long slab_api_kfree_all() {
     if (snd != NULL) {
 #ifdef USE_REAL
         kfree(snd);
-#elif
+#else
         kmem_cache_free(test_cache, snd);
 #endif
         snd = NULL;
