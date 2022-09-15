@@ -309,8 +309,11 @@ int main(int argc, char *argv[]) {
             char path[BUFSIZE];
             sprintf(path, "./ins/%s", de->d_name);
             cmd_list = read_instructions(path);
+#ifdef USE_REAL
             defragment("kmalloc-256", 256,1);
-            //ioctl(fd, SLAB_CREATE_CACHE, NULL);
+#else
+            ioctl(fd, SLAB_CREATE_CACHE, NULL);
+#endif
             int res = execute(fd, cmd_list);
             if (res == -1){
                 fst = 0;
@@ -318,8 +321,11 @@ int main(int argc, char *argv[]) {
             }
             write_result(de->d_name);
             ioctl(fd, SLAB_KFREE_ALL, NULL);
+#ifdef USE_REAL
+            ioctl(fd, SLAB_DEFRAG_FREE_ALL, NULL);
+#else
             ioctl(fd, SLAB_DESTROY_CACHE, NULL);
-            //ioctl(fd, SLAB_DEFRAG_FREE_ALL, NULL);
+#endif
             fst = 0;
             snd = 0;
             free_list(cmd_list);
