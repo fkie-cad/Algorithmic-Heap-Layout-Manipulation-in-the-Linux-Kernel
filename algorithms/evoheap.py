@@ -363,12 +363,20 @@ class EvoHeap(ABC):
         """Returns the fitness given the distance of allocations"""
         distance = self._distances[self._population.index(ind)]
         if type(distance) == int:
-            # change this for natural (>) or reverse (<)
-            if distance > 0:
-                # if(distance < 0):
-                return 2**64 - 1
+            # Case "natural allocation order"
+            if self._target_dist < 0:
+                if distance > 0:
+                    # if(distance < 0):
+                    return 2**64 - 1
+                else:
+                    return abs(distance)
+            # Case "reverse allocation order"
             else:
-                return abs(distance)
+                if distance < 0:
+                    # if(distance < 0):
+                    return 2**64 - 1
+                else:
+                    return abs(distance)
         else:
             return 2**64
 
