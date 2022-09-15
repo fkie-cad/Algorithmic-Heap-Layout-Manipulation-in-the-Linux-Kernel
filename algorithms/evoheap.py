@@ -574,11 +574,11 @@ class EvoHeapWithNoise(EvoHeap):
                     in_use_ids.remove(id_mapping[algo_id])
                     id_mapping.pop(algo_id)
             elif type == FST_T:
-                ids = [
-                    x for x in range(MAX_ID_NORMAL, MAX_ID_TOTAL) if x not in in_use_ids
-                ]
                 selected_ids = []
                 for _ in range(self._noise * 2):
+                    ids = [
+                        x for x in range(MAX_ID_NORMAL, MAX_ID_TOTAL) if x not in in_use_ids
+                    ]
                     id = rnd.choice(ids)
                     selected_ids.append(id)
                     in_use_ids.append(id)
@@ -676,7 +676,7 @@ def use_slabapi_allocs(noise):
     groups[0x1]["probs"] = [1.0]
 
     evo = EvoHeapWithNoise(
-        noise=noise, types=None, groups=groups, alloc_free_ratio=0.5, target_dist=-256
+        noise=noise, types=None, groups=groups, alloc_free_ratio=0.5, target_dist=-96
     )
     evo.do_evo_step()
 
