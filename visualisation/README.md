@@ -108,7 +108,39 @@ Now when we want to see how a candiate is working we just have to invoke `animat
 
 This way we can easily understand how this allocations/deallocations are working and manipulate the heap layout.
 
-## Requirements
+## Requirements animatesolution.py 
 
-- >= python3.6
+- >= python3.6 
 - pyglet (`pip install pyglet`)
+
+## Plotting
+
+The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results from the `tries.log`. In order to check if these script working on your system try at first to generate the plots with the provided `.log`-files. These log files contain the data used in our paper.
+
+`./bar_charts.py` gets as an paramter a file which contains the candidates and should looks like this:
+```bash
+400 kevo
+436 kevo
+..
+3 prs
+...
+```
+The first column indicates the number of candidates and the second column the used algorithm. Further the order indicates the noise level.
+
+With a given candidate file we can generate the bar charts:
+```bash
+./bar_charts.py reverse_challenge.log
+./bar_charts.py natural_challenge.log
+```
+
+With a given candidate file we can generate the box plots:
+```bash
+./box_plots.py reverse_challenge_100_runs.lo
+```
+
+
+## Requirements Plotting
+- >= python3.6
+- numpy (`pip3 install numpy`)
+- matplotlib (`pip3 install matplotlib`)
+
