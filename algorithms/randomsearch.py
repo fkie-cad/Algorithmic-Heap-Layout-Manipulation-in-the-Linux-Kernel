@@ -195,7 +195,7 @@ if __name__ == "__main__":
     sample_size = 200
     # Searcher = RandomSearchSimple(1024, r=0.98,g=sample_size, m=max_cand_size)
     Searcher = RandomSearchNoiseCantBeFreed(
-        256, r=0.5, g=sample_size, m=max_cand_size, noise=args.noise
+        96, r=0.5, g=sample_size, m=max_cand_size, noise=args.noise
     )
     candidates = Searcher.create_batch()
     for i in range(sample_size):
