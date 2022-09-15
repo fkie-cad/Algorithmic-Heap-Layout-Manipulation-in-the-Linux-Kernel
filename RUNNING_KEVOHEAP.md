@@ -1,7 +1,9 @@
 # Running KEvoHeap
 Setting up an environment to effectively run KEvoHeap+QEMU is a little bit convoluted, so here are some instructions
 
-## Run KEvoHeap+QEMU+KernelSieve (Fast-Reset Method)
+## Run KEvoHeap+QEMU+KernelSieve (Custom-Cache Method)
+This is probably the method you want to use if you want to recreate the results from the paper, as it offers the best performance, so it is best for running experiments multiple times in a row.
+
 A large part of setting up QEMU has been automated, but some manual steps still have to be performed.
 
 1. Run the `setup.sh` script. This script will perform the following steps:
@@ -10,6 +12,34 @@ A large part of setting up QEMU has been automated, but some manual steps still 
     - configure and build the kernel
     - create a debian image for qemu, using "create-image.sh" script, which is a slightly modified version of the script syzkaller uses to create images
     - convert the image to qcow2 (needed for savevm)
+2. In both `kernel_sieve/client/kernel_sieve.c` and `kernel_sieve/kernel_module/slab_api.c`, comment out or remove the line `#define USE_REAL`. 
+3. Build the KernelSieve client and kernel module
+```bash
+$ cd kernel_sieve/client/
+$ gcc kernel_sieve.c -static -o kernel_sieve
+$ cd ../kernel_module
+$ make
+```
+4. Start qemu using `qemu_startup_qcow2_no_load.sh`
+5. Copy the following files to qemu
+```bash
+$ ./scp_to_qemu.sh kernel_sieve/client/kernel_sieve
+$ ./scp_to_qemu.sh kernel_sieve/kernel_module/slab_api.ko
+$ ./scp_to_qemu.sh algorithms/evoheap.py
+$ ./scp_to_qemu.sh algorithms/randomsearch.py
+$ ./scp_to_qemu.sh ./evo_statistics.sh
+$ ./scp_to_qemu.sh ./random_statistics.sh
+```
+6. Login to qemu, load the kernel module and create the folders ins, res, and raw
+```bash
+$ ./ssh.sh #(Or login with user "root")
+$ insmod slab_api.ko
+$ mkdir ins res raw
+```
+7. Now you are ready to run kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM). Per default, both scripts will run the respective algorithm for 3 noise 100 times and write the number of generations it needed to find a solution to a file called `tries.log`. To change the number of times the algrithm should be run, change the variable `GLOBAL_RUNS` in the script. To change the level of noise, change the variable `NOISE`.
+
+## Run KEvoHeap+QEMU+KernelSieve (Fast-Reset Method)
+1. Run the `setup.sh` script.
 2. Build the KernelSieve client and kernel module
 ```bash
 $ cd kernel_sieve/client/
@@ -18,7 +48,7 @@ $ cd ../kernel_module
 $ make
 ```
 3. Start qemu using `qemu_startup_qcow2_no_load.sh`
-4. Copy the client and the kernel module to qemu
+4. Copy the client, the kernel module, and the netcat server to qemu
 ```bash
 $ ./scp_to_qemu.sh kernel_sieve/client/kernel_sieve
 $ ./scp_to_qemu.sh kernel_sieve/kernel_module/slab_api.ko
