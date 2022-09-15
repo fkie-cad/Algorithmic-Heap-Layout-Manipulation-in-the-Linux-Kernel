@@ -135,7 +135,7 @@ With a given candidate file we can generate the bar charts:
 
 With a given candidate file we can generate the box plots:
 ```bash
-./box_plots.py reverse_challenge_100_runs.lo
+./box_plots.py reverse_challenge_100_runs.log
 ```
 
 
