@@ -36,7 +36,7 @@ $ ./ssh.sh #(Or login with user "root")
 $ insmod slab_api.ko
 $ mkdir ins res raw
 ```
-7. Now you are ready to run kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM). Per default, both scripts will run the respective algorithm for 3 noise 100 times and write the number of generations it needed to find a solution to a file called `tries.log`. To change the number of times the algrithm should be run, change the variable `GLOBAL_RUNS` in the script. To change the level of noise, change the variable `NOISE`.
+7. Now you are ready to run kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM). Per default, both scripts will run the respective algorithm for 3 noise 100 times and write the number of generations it needed to find a solution to a file called `tries.log`. To change the number of times the algrithm should be run, change the variable `GLOBAL_RUNS` in the script. To change the level of noise, change the variable `NOISE`. The default allocation order is "natural". If you want to change it to reverse, you need to change the target distance to a positive value _both_ in the runner scripts and in evoheap.py (at the place where `EvoHeapWithNoise` is created, in the function `use_slabapi_allocs`)
 
 ## Run KEvoHeap+QEMU+KernelSieve (Fast-Reset Method)
 1. Run the `setup.sh` script.
