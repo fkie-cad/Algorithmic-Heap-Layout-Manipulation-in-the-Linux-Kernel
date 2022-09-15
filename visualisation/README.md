@@ -53,7 +53,7 @@ While this script is running you should see the animated allocations and dealloc
 
 By default our animation is visualizing for a real scenario which means that instead of kmalloc and kfree some system calls are used which are under the control of the exploit developer. Currently we hardcoded only the system calls which are used in our example exploit inside `animatesolution.py` but this can easisly be changed.
 
-## Animating results from algorithmus
+## Animating results from algorithm
 
 In order to use the animation script while working with Kernel-SIEVE or to be more precise to work with the results from the algorithm we have to tell our script that we are running in Kernel-SIEVE mode. When we run for instance KEvoHeap we will receive the following three directories:
 ```bash
