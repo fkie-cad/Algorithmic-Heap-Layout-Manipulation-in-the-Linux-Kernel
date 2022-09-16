@@ -9,12 +9,12 @@ def get_sorted_logs(file_list,do_box_plot):
     sorted_file_list = []
     file_name = os.path.basename(file_list[0])
     num_of_delimiters = len(file_name.split('_'))
+    
+    box_plot_cnt = file_list[0].count("_") - 1
+    if do_box_plot and num_of_delimiters == 5:
+        return sorted(file_list, key=lambda x: os.path.splitext(x.split('_')[box_plot_cnt])[0])
 
-    if num_of_delimiters != 3 and num_of_delimiters != 4:
-        if num_of_delimiters == 5 and do_box_plot:
-            cnt = file_list[0].count("_") - 1
-            return sorted(file_list, key=lambda x: os.path.splitext(x.split('_')[cnt])[0])
-            
+    if num_of_delimiters != 3 and num_of_delimiters != 4:            
         print("Error: unknown format\nExiting....")
         exit()
     
