@@ -260,6 +260,57 @@ $ ls reverse
 0_noise_rev_prs.log   1_noise_rev_prs.log   2_noise_rev_prs.log   3_noise_rev_prs.log   4_noise_rev_prs.log   5_noise_rev_prs.log
 ```
 
+We can use our `preprocessing.py`-script in order to get a list of average candidate solutions for the respective noise level. If we redirect the output to a file, we can later use that file for plotting:
+```bash
+$ ./preprocessing.py reverse > natural_allocation_challenge.log
+$ cat natural_allocation_challenge.log
+400 kevo
+400 kevo
+496 kevo
+1220 kevo
+1900 kevo
+2548 kevo
+3280 kevo
+9 prs
+61 prs
+376 prs
+2796 prs
+28408 prs
+42752 prs
+```
+
+Keep in mind when we want to do a box plot we need instead <n>-times a `tries.log`-file for the same noise level, the same algorithm and the same allocation order. Its struture should than look like the following:
+```
+<noise_level>_noise_<algorithm>_.log --> natural allocation order
+<noise_level>_noise_rev_<algorithm>_<iterator>.log --> reverse allocation order
+```
+
+```bash
+$ ls noise0_reverse_challenge_100_runs/
+0_noise_rev_kevo_10.log  0_noise_rev_kevo_14.log  0_noise_rev_kevo_4.log  0_noise_rev_kevo_8.log  0_noise_rev_prs_12.log  0_noise_rev_prs_4.log  0_noise_rev_prs_8.log
+0_noise_rev_kevo_11.log  0_noise_rev_kevo_1.log   0_noise_rev_kevo_5.log  0_noise_rev_kevo_9.log  0_noise_rev_prs_1.log   0_noise_rev_prs_5.log  0_noise_rev_prs_9.log
+0_noise_rev_kevo_12.log  0_noise_rev_kevo_2.log   0_noise_rev_kevo_6.log  0_noise_rev_prs_10.log  0_noise_rev_prs_2.log   0_noise_rev_prs_6.log  0_noise_rev_prs_7.log
+...
+```
+
+Because of the diffrent structure of these files we need to provide the parameter `-f box` to tell the `preprocessing.py`-script that its structure changed:
+```bash
+$ ./preprocessing.py -f box noise0_reverse_challenge_100_runs > box_blot_data_noise0_reverse_challenge_100_runs.log
+$ cat box_blot_data_noise0_reverse_challenge_100_runs.log
+400 kevo
+2748 kevo
+4648 kevo
+9140 kevo
+17300 kevo
+400 kevo
+400 kevo
+496 kevo
+1220 kevo
+1900 kevo
+...
+```
+
+Now we know everything we need to plot the log data.
 
 ## Plotting
 
@@ -273,7 +324,7 @@ The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results f
 3 prs
 ...
 ```
-The first column indicates the number of candidates and the second column the used algorithm. Further the order indicates the noise level.
+The first column indicates the number of candidates and the second column the used algorithm (cf. above). Further the order indicates the noise level.
 
 With a given candidate file we can generate the bar charts:
 ```bash
@@ -281,7 +332,7 @@ With a given candidate file we can generate the bar charts:
 ./bar_charts.py natural_challenge.log
 ```
 
-With a given candidate file we can generate the box plots:
+With a given candidate file we can also generate box plots:
 ```bash
 ./box_plots.py reverse_challenge_100_runs.log
 ```
