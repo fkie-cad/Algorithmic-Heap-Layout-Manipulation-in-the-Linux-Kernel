@@ -51,15 +51,18 @@ def create_plot(n_groups, kevoheap, prs,candidate_file):
     plt.ylabel('Candidates')
     plt.title('Bar chart showing the average generations needed in both algorithms with respect to the level of noise: %s' %candidate_file)
     plt.xticks(index + bar_width, ('0', '1', '2', '3', '4', '5','6'))
-    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-               fancybox=True, shadow=True, ncol=5)
-    
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
     plt.tight_layout()
+    
+    ax2 = ax.twinx()
+    ax2.set_ylim(0,250)
+    ax2.set_ylabel('Generations')
+    
     plt.show()
 
 
 # data to plot
-n_groups = 7
+n_groups = 7 #number of max noise
 kevoheap=[]
 prs=[]
 

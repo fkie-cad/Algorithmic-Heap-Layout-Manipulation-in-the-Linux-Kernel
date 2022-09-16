@@ -20,7 +20,7 @@ def create_blox_plot(kevoheap, prs,candidate_file):
             whiskerprops=dict(color=c),
             flierprops=dict(color=c, markeredgecolor=c),
             medianprops=dict(color=c))
-    #                 ,labels='KEvoHeap')
+
     r = "red"
     bp2 =ax.boxplot(prs,positions=[2], 
                      boxprops=dict(color=r),
@@ -29,12 +29,11 @@ def create_blox_plot(kevoheap, prs,candidate_file):
             flierprops=dict(color=r, markeredgecolor=r),
             medianprops=dict(color=r))
    
-    #,ylim=(0,100)
+    
     ax2 = ax.twinx()
     ax2.set_ylim(0,35)
     ax2.set_ylabel('Generations')
     ax.set_ylabel('Candidates')
-    #plt.ylabel('Generations')
     plt.title('Box plot illustrating the distribution of numbers of candidates generated: %s' %candidate_file)
     plt.xticks(np.arange(2)+1, ('KEvoHeap', 'Pseudo-random search'))
     plt.legend([bp1["boxes"][0], bp2["boxes"][0]], ['KEvoHeap', 'Pseudo-random search'], loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=5)
@@ -49,7 +48,7 @@ prs=[]
 
 
 # Here it begins
-parser = argparse.ArgumentParser(description="Plot a bar chart based on the results!")
+parser = argparse.ArgumentParser(description="Create a box plot based on the results!")
 parser.add_argument("candidates", type=str, nargs=1, help="The candidat list to use")
 args = parser.parse_args()
 

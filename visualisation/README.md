@@ -113,9 +113,157 @@ This way we can easily understand how this allocations/deallocations are working
 - >= python3.6 
 - pyglet (`pip install pyglet`)
 
+## Preprocessing tries.log
+
+When running kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM) a solution file called `tries.log` is created. This file contains the number of generations it needed to find a solution. By default both scripts will run the respective algorithm for 3 noise 100 times for the allocation order "natural". In the following we see an example output from  `tries.log`  after running  `./evo_statistics.sh` configured for 3 noise 100 times for the allocation order "natural":
+```bash
+$ cat tries.log
+Number of generations:
+4
+11
+4
+6
+5
+8
+6
+11
+4
+10
+9
+5
+5
+6
+2
+2
+2
+5
+11
+2
+2
+11
+5
+2
+2
+5
+9
+11
+2
+7
+8
+4
+11
+5
+17
+5
+8
+5
+2
+7
+4
+3
+7
+8
+2
+2
+17
+2
+6
+8
+9
+8
+8
+6
+8
+5
+6
+5
+7
+3
+4
+7
+2
+11
+5
+5
+8
+4
+10
+3
+13
+4
+10
+10
+6
+2
+5
+9
+3
+13
+11
+4
+5
+2
+12
+11
+10
+10
+7
+12
+7
+10
+2
+3
+3
+8
+2
+5
+3
+11
+```
+
+Now we can calculate the average generations easily utilizing `awk`:
+```bash
+$ awk 'BEGIN {print "Calculating average generations:"} NR > 1 { sum += $1; n++ } END { if (n > 0) print sum / n; }' tries.log
+Calculating average generations:
+6.42
+```
+In order to plot these results we have to remember that each generation consist of 400 candidate solutions (cf. (KEvoHeap)[https://github.com/fkie-cad/Algorithmic-Heap-Layout-Manipulation-in-the-Linux-Kernel/blob/25b4b3f671ad414f03e35486129c54eff981fa92/algorithms/evoheap.py#L442]). For KEvoHeap we have to keep that into account when we want to get the average tries it took to get a solution:
+```bash
+$ awk 'BEGIN {print "Calculating candidates (num of tries):"} NR > 1 {sum =$1*400 + sum; n++} END { if (n > 0) printf("%.0f\n", sum / n);; }' tries.log
+Calculating candidates (num of tries):
+400
+```
+Instead when wan to calculate the overall number of tries it took to get a solution from pseudo-random search we don't have to take that into account because its `tries.log`-file already contains the final number of tries:
+```bash
+$ awk 'BEGIN {print "Calculating candidates (num of tries):"} NR > 1 {sum =$1 + sum; n++} END { if (n > 0)  printf("%.0f\n", sum / n); }' tries.log
+Calculating candidates (num of tries):
+3
+```
+To indicate if we are dealing with the total number of candidates or if we only have the number of generations we have analyze the first line of `tries.log`:
+```bash
+Number of tries: 		--> total number of candidates
+Number of generations:	--> number of generations
+```
+
+Furthermore, if we want to plot something we take the average candidate solutions for the respective noise level. So for instance to plot a bar chart showing the average generations needed in both algorithms with respect to the level of noise, we have to generate for each noise level a `tries.log`-file for each algorithm. Instead of doing this manually we provided `preprocessing.py` to do the parsing. It expects an folder containing the different tries.log files which have the following structure:
+```
+<noise_level>_noise_<algorithm>.log --> natural allocation order
+<noise_level>_noise_rev_<algorithm>.log --> reverse allocation order
+```
+In our example to illustrate the steps to be taken we will have the following two folders:
+```bash
+$ ls natural
+0_noise_kevo.log  1_noise_kevo.log  2_noise_kevo.log  3_noise_kevo.log  4_noise_kevo.log  5_noise_kevo.log  6_noise_kevo.log
+0_noise_prs.log   1_noise_prs.log   2_noise_prs.log   3_noise_prs.log   4_noise_prs.log   5_noise_prs.log
+$ ls reverse
+0_noise_rev_kevo.log  1_noise_rev_kevo.log  2_noise_rev_kevo.log  3_noise_rev_kevo.log  4_noise_rev_kevo.log  5_noise_rev_kevo.log  6_noise_rev_kevo.log
+0_noise_rev_prs.log   1_noise_rev_prs.log   2_noise_rev_prs.log   3_noise_rev_prs.log   4_noise_rev_prs.log   5_noise_rev_prs.log
+```
+
+
 ## Plotting
 
-The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results from the `tries.log`. In order to check if these script working on your system try at first to generate the plots with the provided `.log`-files. These log files contain the data used in our paper.
+The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results from the `tries.log` after the preprocessed them. In order to check if these script working on your system try at first to generate the plots with the provided `.log`-files. These log files contain the data used in our paper.
 
 `./bar_charts.py` gets as an paramter a file which contains the candidates and should looks like this:
 ```bash
