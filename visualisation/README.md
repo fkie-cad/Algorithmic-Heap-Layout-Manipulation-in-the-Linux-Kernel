@@ -239,13 +239,13 @@ $ awk 'BEGIN {print "Calculating candidates (num of tries):"} NR > 1 {sum =$1 + 
 Calculating candidates (num of tries):
 3
 ```
-To indicate if we are dealing with the total number of candidates or if we only have the number of generations we have analyze the first line of `tries.log`:
+To indicate if we are dealing with the total number of candidates or if we only have the number of generations we have to analyze the first line of `tries.log`:
 ```bash
 Number of tries: 		--> total number of candidates
 Number of generations:	--> number of generations
 ```
 
-Furthermore, if we want to plot something we take the average candidate solutions for the respective noise level. So for instance to plot a bar chart showing the average generations needed in both algorithms with respect to the level of noise, we have to generate for each noise level a `tries.log`-file for each algorithm. Instead of doing this manually we provided `preprocessing.py` to do the parsing. It expects an folder containing the different tries.log files which have the following structure:
+Furthermore, if we want to plot something we take the average candidate solutions for the respective noise level. So for instance to plot a bar chart showing the average generations needed in both algorithms with respect to the level of noise, we have to generate for each noise level a `tries.log`-file for each algorithm. Instead of doing this manually we provided `preprocessing.py` to do the parsing. It expects a folder containing the different `tries.log`- files which have the following structure:
 ```
 <noise_level>_noise_<algorithm>.log --> natural allocation order
 <noise_level>_noise_rev_<algorithm>.log --> reverse allocation order
@@ -279,12 +279,12 @@ $ cat natural_allocation_challenge.log
 42752 prs
 ```
 
-Keep in mind when we want to do a box plot we need instead <n>-times a `tries.log`-file for the same noise level, the same algorithm and the same allocation order. Its struture should than look like the following:
+Keep in mind when we want to do a box plot we need instead n-times a `tries.log`-file for the same noise level, the same algorithm and the same allocation order. Its struture should than look like the following:
 ```
-<noise_level>_noise_<algorithm>_.log --> natural allocation order
+<noise_level>_noise_<algorithm>_<iterator>.log --> natural allocation order
 <noise_level>_noise_rev_<algorithm>_<iterator>.log --> reverse allocation order
 ```
-
+and the example directory of  n-times the `tries.log`-file looks like the following:
 ```bash
 $ ls noise0_reverse_challenge_100_runs/
 0_noise_rev_kevo_10.log  0_noise_rev_kevo_14.log  0_noise_rev_kevo_4.log  0_noise_rev_kevo_8.log  0_noise_rev_prs_12.log  0_noise_rev_prs_4.log  0_noise_rev_prs_8.log
@@ -310,11 +310,11 @@ $ cat box_blot_data_noise0_reverse_challenge_100_runs.log
 ...
 ```
 
-Now we know everything we need to plot the log data.
+Now we know how to preprocess the `tries.log`-files to plot the log data.
 
 ## Plotting
 
-The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results from the `tries.log` after the preprocessed them. In order to check if these script working on your system try at first to generate the plots with the provided `.log`-files. These log files contain the data used in our paper.
+The scripts `box_plots.py` and `bar_charts.py` can be used to plot the results from the `tries.log`-file after we preprocessed them. In order to check if these scripts working on your system try at first to generate the plots with the provided `.log`-files. These log files contain the data used in our paper.
 
 `./bar_charts.py` gets as an paramter a file which contains the candidates and should looks like this:
 ```bash
