@@ -30,11 +30,11 @@ $ ./scp_to_qemu.sh algorithms/randomsearch.py
 $ ./scp_to_qemu.sh ./evo_statistics.sh
 $ ./scp_to_qemu.sh ./random_statistics.sh
 ```
-6. Login to qemu, load the kernel module and create the folders ins, res, and raw
+6. Login to qemu, load the kernel module and create the folders ins, res, raw and exec
 ```bash
 $ ./ssh.sh #(Or login with user "root")
 $ insmod slab_api.ko
-$ mkdir ins res raw
+$ mkdir ins res raw exec
 ```
 7. Now you are ready to run kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM). Per default, both scripts will run the respective algorithm for 3 noise 100 times and write the number of generations it needed to find a solution to a file called `tries.log`. To change the number of times the algrithm should be run, change the variable `GLOBAL_RUNS` in the script. To change the level of noise, change the variable `NOISE`. The default allocation order is "natural". If you want to change it to reverse, you need to change the target distance to a positive value _both_ in the runner scripts and in evoheap.py (at the place where `EvoHeapWithNoise` is created, in the function `use_slabapi_allocs`)
 
@@ -63,14 +63,19 @@ $ chmod +x ncserver.sh
 $ ./ncserver.sh &
 ```
 
-6. create folders `ins`, `res` and `raw` both in the VM as well as on the host
-
+6. create folders `ins`, `res` , `raw` and `exec` both in the VM as well as on the host
+```bash
+$ mkdir ins res raw exec
+```
 7. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor. One way to do this is to connect to it via netcat on port 55555
 ```bash
 #On the host
 $ nc localhost 55555
 $ savevm savestate
 ```
+
+Now you have the possibility to quit (just enter `quit`) this qemu session or you can move to another tab/window and start there one of the scripts to generate the statistics. These script will quit the current the current qemu session and start it again. 
+
 8. To now run EvoHeap with fast reset, quit qemu and run `fast_reset_evo_statistics.sh` (The script starts a new qemu instance, thats why we quit qemu first). To modify the number of noise allocations, edit the `fast_reset_evo_statistics.sh` script and change the `-n` parameter in the line `python3 algorithms/evoheap.py -a ksieve -n 3`.
 
 
@@ -100,7 +105,10 @@ $ ./scp_to_qemu.sh ./netcat_from_buster
 $ ./scp_to_qemu.sh ./ncserver.sh
 $ ./scp_to_qemu.sh ./kmem.bt
 ```
-6. create folders `ins`, `res`, `raw`, and `res` both in the VM as well as on the host
+6. create folders `ins`, `res`, `raw`, and `exec` both in the VM as well as on the host
+```bash
+$ mkdir ins res raw exec
+```
 7. Shut qemu down and restart it
 8. Load the modules, start the server and bpftrace
 ```bash
@@ -117,7 +125,10 @@ $ ./kmem.bt > /tmp/dist
 $ nc localhost 55555
 $ savevm savestate
 ```
-10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it. The defaultis 2.
+
+Now you have the possibility to quit (just enter `quit`) this qemu session or you can move to another tab/window and start there one of the scripts to generate the statistics. These script will quit the current the current qemu session and start it again. 
+
+10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it. The default is 2.
 
 ## Troubleshooting
 ### Errors in res/
