@@ -33,8 +33,9 @@ $ ./scp_to_qemu.sh ./random_statistics.sh
 6. Login to qemu, load the kernel module and create the folders ins, res, raw and exec
 ```bash
 $ ./ssh.sh #(Or login with user "root")
-$ insmod slab_api.ko
-$ mkdir ins res raw exec
+...
+root@syzkaller:~# insmod slab_api.ko
+root@syzkaller:~# mkdir ins res raw exec
 ```
 7. Now you are ready to run kevoheap via `./evo_statistics.sh` and randomsearch via `./random_statistics.sh` (both from INSIDE the VM). Per default, both scripts will run the respective algorithm for 3 noise 100 times and write the number of generations it needed to find a solution to a file called `tries.log`. To change the number of times the algrithm should be run, change the variable `GLOBAL_RUNS` in the script. To change the level of noise, change the variable `NOISE`. The default allocation order is "natural". If you want to change it to reverse, you need to change the target distance to a positive value _both_ in the runner scripts and in evoheap.py (at the place where `EvoHeapWithNoise` is created, in the function `use_slabapi_allocs`)
 
@@ -58,16 +59,16 @@ $ ./scp_to_qemu.sh ./ncserver.sh
 5. Login to qemu, load the kernel module and start the server
 ```bash
 $ ./ssh.sh #(Or login with user "root")
-$ insmod slab_api.ko
-$ chmod +x ncserver.sh
-$ ./ncserver.sh &
+root@syzkaller:~# insmod slab_api.ko
+root@syzkaller:~# chmod +x ncserver.sh
+root@syzkaller:~# ./ncserver.sh &
 ```
 
 6. create folders `ins`, `res` , `raw` and `exec` both in the VM as well as on the host
 ```bash
 $ mkdir ins res raw exec
 ```
-7. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor. One way to do this is to connect to it via netcat on port 55555
+7. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor in another tab/window. One way to do this is to connect to it via netcat on port 55555
 ```bash
 #On the host
 $ nc localhost 55555
@@ -105,21 +106,39 @@ $ ./scp_to_qemu.sh ./netcat_from_buster
 $ ./scp_to_qemu.sh ./ncserver.sh
 $ ./scp_to_qemu.sh ./kmem.bt
 ```
-6. create folders `ins`, `res`, `raw`, and `exec` both in the VM as well as on the host
+6. create folders `ins`, `res`, `raw`, and `exec` both in the VM as well as on the host.
+Host (in the same path as `./bpf_evo_runner.sh`; we expect it to be root folder of our repo):
 ```bash
 $ mkdir ins res raw exec
+```
+```bash
+$ ./ssh.sh
+Linux syzkaller 5.14.11 #1 SMP Mon Sep 19 12:10:32 CEST 2022 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+A valid context for root could not be obtained.
+Last login: Tue Sep 20 05:36:12 2022 from 10.0.2.10
+root@syzkaller:~# mkdir ins res raw exec
 ```
 7. Shut qemu down and restart it (e.g. run `reboot`)
 8. Load the modules, start the server and bpftrace
 ```bash
-$ insmod slab_api.ko
-$ insmod vuln.ko
-$ chmod +x ncserver.sh
-$ ./ncserver.sh &
-$ chmod +x kmem.bt
-$ ./kmem.bt > /tmp/dist
+$ ./ssh.sh
+...
+root@syzkaller:~# mkdir ins res raw exec
+root@syzkaller:~# insmod slab_api.ko
+root@syzkaller:~# insmod vuln.ko
+root@syzkaller:~# chmod +x ncserver.sh
+root@syzkaller:~# ./ncserver.sh &
+root@syzkaller:~# chmod +x kmem.bt
+root@syzkaller:~# ./kmem.bt > /tmp/dist
 ```
-9. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor. One way to do this is to connect to it via netcat on port 55555
+9. Create the savestate that we will use for Fast-Reset. To do this, access qemu monitor in another tab/window. One way to do this is to connect to it via netcat on port 55555
 ```bash
 #On the host
 $ nc localhost 55555
