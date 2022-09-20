@@ -74,7 +74,7 @@ $ nc localhost 55555
 $ savevm savestate
 ```
 
-Now you have the possibility to quit (just enter `quit`) this qemu session or you can move to another tab/window and start there one of the scripts to generate the statistics. These script will quit the current the current qemu session and start it again. 
+Now you should quit (just enter `quit`) this qemu session or you can just press `CTRL+C`. QEMU will start automatically by the scripts to generate the statistics in the final step.
 
 8. To now run EvoHeap with fast reset, quit qemu and run `fast_reset_evo_statistics.sh` (The script starts a new qemu instance, thats why we quit qemu first). To modify the number of noise allocations, edit the `fast_reset_evo_statistics.sh` script and change the `-n` parameter in the line `python3 algorithms/evoheap.py -a ksieve -n 3`.
 
@@ -109,7 +109,7 @@ $ ./scp_to_qemu.sh ./kmem.bt
 ```bash
 $ mkdir ins res raw exec
 ```
-7. Shut qemu down and restart it
+7. Shut qemu down and restart it (e.g. run `reboot`)
 8. Load the modules, start the server and bpftrace
 ```bash
 $ insmod slab_api.ko
@@ -125,10 +125,73 @@ $ ./kmem.bt > /tmp/dist
 $ nc localhost 55555
 $ savevm savestate
 ```
-
-Now you have the possibility to quit (just enter `quit`) this qemu session or you can move to another tab/window and start there one of the scripts to generate the statistics. These script will quit the current the current qemu session and start it again. 
+                                                                                          
+Now you should quit (just enter `quit`) this qemu session or you can just press `CTRL+C`. QEMU will start automatically by the runner script in the final step.
 
 10. Run evoheap via `./bpf_evo_runner.sh` after modifying `./algorithms/evoheap.py` accordingly to your needs. If you want to modify the number of noise allocations performed, you need to modify the `vuln` kernel module and rebuild it. The default is 2.
+
+```bash
+$./bpf_evo_runner.sh
+[*] Starting try number 1
+...
+Ping...
+Ping...
+Ping...
+Ping...
+...
+Ping...
+Ping...
+Ping...
+Ping...
+Going into next gen after 72 tries
+[!] Found solution!
+int fengshui318 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui573 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui956 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui628 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui230 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui1249 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui569 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui1518 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui984 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui956, IPC_RMID, NULL);
+shmctl(fengshui984, IPC_RMID, NULL);
+shmctl(fengshui569, IPC_RMID, NULL);
+shmctl(fengshui230, IPC_RMID, NULL);
+sleep(1);
+int fengshui370 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui318, IPC_RMID, NULL);
+shmctl(fengshui1249, IPC_RMID, NULL);
+sleep(1);
+int fengshui1608 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui628, IPC_RMID, NULL);
+sleep(1);
+int fengshui1319 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui1518, IPC_RMID, NULL);
+sleep(1);
+int fengshui189 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui573, IPC_RMID, NULL);
+shmctl(fengshui1608, IPC_RMID, NULL);
+sleep(1);
+int fengshui625 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui1319, IPC_RMID, NULL);
+shmctl(fengshui189, IPC_RMID, NULL);
+sleep(1);
+int fengshui1253 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+int fengshui934 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+shmctl(fengshui625, IPC_RMID, NULL);
+shmctl(fengshui370, IPC_RMID, NULL);
+shmctl(fengshui934, IPC_RMID, NULL);
+shmctl(fengshui1253, IPC_RMID, NULL);
+sleep(1);
+int fengshui61 = shmget(IPC_PRIVATE, 1024, IPC_CREAT);
+ioctl(fd, VULN_ALLOC_OVERFLOW);
+ioctl(fd, VULN_ALLOC_TARGET);
+
+Fitness: 256
+```
+
+Now after some time KEvoHeap will print the solution for the heap layout manipulation. This solution can now be used in `exploit/demo_exploit_with_noise.c` for the function `do_heap_layout_manipulation(int fd)`. Moreover the hard coded adresss of `commit_creds` and `prepare_kernel_cred` needs to be updated as written in the function `escalate_privs(void)`. Normally these addresses should be resolved dynamically but in this case we want to focus on the heap layout manipulation.
 
 ## Troubleshooting
 ### Errors in res/
