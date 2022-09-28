@@ -1,5 +1,13 @@
 # Visualisation
 
+- [Visualisation](#visualisation)
+  * [Animating results from algorithm](#animating-results-from-algorithm)
+  * [Requirements animatesolution.py](#requirements-animatesolutionpy)
+  * [Preprocessing tries.log](#preprocessing-trieslog)
+  * [Plotting](#plotting)
+  * [Requirements Plotting](#requirements-plotting)
+
+
 The script `animatesolution.py` can be used to visualize the results from our algorithmic solutions.
 
 In order to run the script at least a candidate solution needes to be provided:

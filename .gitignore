@@ -1,0 +1,19 @@
+# the folder from kernel sieve
+raw/
+ins/
+exec/
+res/
+
+# generated files
+*.o
+tries.log
+vm.pid
+vm.log
+*.id_rsa
+*.id_rsa.pub
+*.img
+*.qcow2
+kernel_src/
+vuln/*.*.cmd
+kernel_sieve/kernel_module/*.*.cmd
+exploit/demo_exploit_with_noise
