@@ -8,6 +8,7 @@ The content of this README:
   * [Plotting](#plotting)
   * [Requirements Plotting](#requirements-plotting)
 
+## Visualize the results from our algorithmic solutions
 
 The script `animatesolution.py` can be used to visualize the results from our algorithmic solutions.
 
