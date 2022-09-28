@@ -20,6 +20,7 @@ Just follow the instruction at [RUNNING_KEVOHEAP.md](https://github.com/fkie-cad
 ## Dependencies
 
 - >= python3.6
+- deap (`pip3 install deap`)
 
 For the visualisation:
 - pyglet (pip install pyglet)
