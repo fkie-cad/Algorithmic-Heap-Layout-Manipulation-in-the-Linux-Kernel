@@ -23,6 +23,6 @@ Just follow the instruction at [RUNNING_KEVOHEAP.md](https://github.com/fkie-cad
 - deap (`pip3 install deap`)
 
 For the visualisation:
-- pyglet (pip install pyglet)
-- numpy (pip3 install numpy)
-- matplotlib (pip3 install matplotlib)
+- pyglet (`pip3 install pyglet`)
+- numpy (`pip3 install numpy`)
+- matplotlib (`pip3 install matplotlib`)
