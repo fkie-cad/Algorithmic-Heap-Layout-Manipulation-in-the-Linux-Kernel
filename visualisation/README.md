@@ -1,5 +1,6 @@
 # Visualisation
 
+The content of this README:
 - [Visualisation](#visualisation)
   * [Animating results from algorithm](#animating-results-from-algorithm)
   * [Requirements animatesolution.py](#requirements-animatesolutionpy)
