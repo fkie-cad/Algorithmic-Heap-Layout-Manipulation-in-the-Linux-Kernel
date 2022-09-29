@@ -183,6 +183,12 @@ fi
 # Create a /dev/vim2m symlink for the device managed by the vim2m driver
 echo 'ATTR{name}=="vim2m", SYMLINK+="vim2m"' | sudo tee -a $DIR/etc/udev/rules.d/50-udev-default.rules
 
+# Add a user
+sudo chroot $DIR /bin/bash -c "/usr/sbin/useradd -m MyUser -s /bin/bash"
+ssh-keygen -f user_$RELEASE.id_rsa -t rsa -N ''
+sudo mkdir -p $DIR/home/MyUser/.ssh/
+cat user_$RELEASE.id_rsa.pub | sudo tee $DIR/home/MyUser/.ssh/authorized_keys
+
 # Build a disk image
 dd if=/dev/zero of=$RELEASE.img bs=1M seek=$SEEK count=1
 sudo mkfs.ext4 -F $RELEASE.img

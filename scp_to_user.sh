@@ -6,4 +6,4 @@ fi
 
 
 FILENAME=$1
-scp  -P 10021  -o "StrictHostKeyChecking no" -r $FILENAME he1n@localhost:/home/he1n 
+scp -i ./user_bullseye.id_rsa -P 10021  -o "StrictHostKeyChecking no" -r $FILENAME MyUser@localhost:/home/MyUser 
